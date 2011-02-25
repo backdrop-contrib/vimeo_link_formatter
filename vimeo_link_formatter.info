@@ -1,4 +1,3 @@
-; $Id$
 name = 'Vimeo Link Formatter'
 description = 'Provides a field formatter for Link fields to format them as Vimeo video players.'
 core = 7.x
