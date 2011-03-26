@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Provides admin functions for the Vimeo Link Formatter.

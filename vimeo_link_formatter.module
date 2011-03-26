@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Provides a field formatter for Link fields to format them as Vimeo video players.
