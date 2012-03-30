@@ -15,36 +15,11 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
   // Access the formatter settings for this instance of the Link field.
   $settings = $instance['display'][$view_mode]['settings'];
 
-  // Build a list of elements that are configured to show.
-  $show = array(
+  // Build a comma-separated list of options that are enabled.
+  $options = array(
     'portrait' => t('Portrait'),
     'title' => t('Title'),
     'byline' => t('Byline'),
-  );
-  foreach (array_keys($show) as $name) {
-    if (!$settings[$name]) {
-      unset($show[$name]);
-    }
-  }
-  if (empty($show)) {
-    // Zero (0) elements are shown.
-    $show = t('none');
-  }
-  else {
-    $last = array_pop($show);
-    if (empty($show)) {
-      // One (1) element is shown.
-      $show = $last;
-    }
-    else {
-      // Two (2) or more elements are shown.
-      $list = implode(', ', $show);
-      $show = t('!list and !last', array('!list' => $list, '!last' => $last));
-    }
-  }
-
-  // Build a comma-separated list of options that are enabled.
-  $options = array(
     'autoplay' => t('Autoplay'),
     'loop' => t('Loop'),
   );
@@ -53,6 +28,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
       unset($options[$name]);
     }
   }
+
   // Join the enabled options with commas and end with a period.
   // Set $options to an empty string if none are enabled.
   $options = empty($options) ? '' : implode(', ', $options) . '.';
@@ -71,7 +47,6 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
     // Inline CSS is not translatable.
     '!attributes' => drupal_attributes(compact('style')),
     '!color' => $settings['color'],
-    '!show' => $show,
     '!options' => $options,
   );
 
@@ -117,41 +92,23 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   );
 
   // Video information.
-  $form['show'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Video information'),
-    '#description' => t('Show or hide data about the video in the player.'),
-    'portrait' => array(
-      '#title' => t('Portrait'),
-      '#description' => t("The video submitter's picture or avatar."),
-    ),
-    'title' => array(
-      '#title' => t('Title'),
-      '#description' => t('The name of the video.'),
-    ),
-    'byline' => array(
-      '#title' => t('Byline'),
-      '#description' => t('Who the video is by.'),
-    ),
+  $form['portrait'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display Portrait'),
+    '#description' => t("Display the video submitter's picture or avatar."),
   );
 
-  // Process children of the video information fieldset.
-  $parents = array('fields', $field['field_name'], 'settings_edit_form', 'settings');
-  foreach (array_keys($form['show']) as $key) {
-    // Ignore Form API attributes.
-    if (drupal_substr($key, 0, 1) !== '#') {
-      // All children are checkboxes.
-      $form['show'][$key]['#type'] = 'checkbox';
+  $form['title'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display Title'),
+    '#description' => t('Display the name of the video.'),
+  );
 
-      // Set #default_value too.
-      $form['show'][$key]['#default_value'] = $settings[$key];
-
-      // The formatter settings form is a sub-form element in the node type's
-      // "Manage Display form".  Hack in the correct #parents so that the
-      // children form elements get found in the correct place.
-      $form['show'][$key]['#parents'] = array_merge($parents, array($key));
-    }
-  }
+  $form['byline'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display Byline'),
+    '#description' => t('Display who the video is by.'),
+  );
 
   // Autoplay checkbox.
   $form['autoplay'] = array(
