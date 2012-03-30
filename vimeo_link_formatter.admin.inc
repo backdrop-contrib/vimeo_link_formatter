@@ -6,7 +6,7 @@
 
 
 /**
- * Implementation of hook_field_formatter_settings_summary_FORMATTER().
+ * Implements hook_field_formatter_settings_summary_FORMATTER().
  *
  * @return String
  *    Translated text string summarizing the formatter settings.
@@ -79,7 +79,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
 }
 
 /**
- * Implementation of hook_field_formatter_settings_form_FORMATTER().
+ * Implements hook_field_formatter_settings_form_FORMATTER().
  */
 function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter_player($field, $instance, $view_mode, $form, &$form_state) {
   // Access the formatter settings for this instance of the Link field.
@@ -139,7 +139,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   $parents = array('fields', $field['field_name'], 'settings_edit_form', 'settings');
   foreach (array_keys($form['show']) as $key) {
     // Ignore Form API attributes.
-    if (substr($key, 0, 1) !== '#') {
+    if (drupal_substr($key, 0, 1) !== '#') {
       // All children are checkboxes.
       $form['show'][$key]['#type'] = 'checkbox';
 
@@ -168,7 +168,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   );
 
   // Set some Form API attributes that apply to all elements.
-  $size = max(strlen('000000'), strlen('100%'));
+  $size = max(drupal_strlen('000000'), drupal_strlen('100%'));
   foreach (array_keys($form) as $key) {
     // Textboxes are smaller than default.  #size is ignored for checkboxes.
     $form[$key]['#size'] = $size;

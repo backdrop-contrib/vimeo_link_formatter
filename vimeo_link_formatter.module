@@ -6,7 +6,7 @@
 
 
 /**
- * Implementation of hook_field_formatter_info().
+ * Implementats hook_field_formatter_info().
  */
 function vimeo_link_formatter_field_formatter_info() {
   $formatters = array();
@@ -29,7 +29,7 @@ function vimeo_link_formatter_field_formatter_info() {
 }
 
 /**
- * Implementation of hook_field_formatter_settings_summary().
+ * Implements hook_field_formatter_settings_summary().
  */
 function vimeo_link_formatter_field_formatter_settings_summary(&$field, &$instance, &$view_mode) {
   module_load_include('admin.inc', 'vimeo_link_formatter');
@@ -39,7 +39,7 @@ function vimeo_link_formatter_field_formatter_settings_summary(&$field, &$instan
 }
 
 /**
- * Implementation of hook_field_formatter_settings_form().
+ * Implements hook_field_formatter_settings_form().
  */
 function vimeo_link_formatter_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
   module_load_include('admin.inc', 'vimeo_link_formatter');
@@ -49,7 +49,7 @@ function vimeo_link_formatter_field_formatter_settings_form($field, $instance, $
 }
 
 /**
- * Implementation of hook_field_formatter_view().
+ * Implements hook_field_formatter_view().
  */
 function vimeo_link_formatter_field_formatter_view(&$entity_type, &$entity, &$field, &$instance, &$langcode, &$items, &$display) {
   // Call the function which handles this formatter.
@@ -58,14 +58,14 @@ function vimeo_link_formatter_field_formatter_view(&$entity_type, &$entity, &$fi
 }
 
 /**
- * Implementation of vimeo_link_formatter_field_formatter_view_FORMATTER();
+ * Implements vimeo_link_formatter_field_formatter_view_FORMATTER();
  *
  * Renders $items as <iframe>s for the vimeo_link_formatter_player formatter.
  *
  * @return Array
  *    A render()-compatible array of #markup strings, E.g.
  *      <iframe src="http://player.vimeo.com/video/14309120?title=0&amp;
- *      byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1&amp;loop=1" 
+ *      byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1&amp;loop=1"
  *      width="400" height="225" frameborder="0"></iframe>
  */
 function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
