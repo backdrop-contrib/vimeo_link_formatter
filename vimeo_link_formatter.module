@@ -93,7 +93,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
     //   title=1 will cause the same effect as setting title=0, which is not
     //   desirable.
     // Also, skip over the settings used for attributes.
-    if (!in_array($name, $settings) && $defaults[$name] !== $value) {
+    if (!in_array($name, $settings) && isset($defaults[$name]) && $defaults[$name] !== $value) {
       $url['query'][$name] = $value;
     }
   }
