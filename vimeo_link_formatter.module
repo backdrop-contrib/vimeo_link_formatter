@@ -18,12 +18,12 @@ function vimeo_link_formatter_field_formatter_info() {
     'settings' => vimeo_link_formatter_default_settings_player(),
   );
 
-  // @todo Implement the rest of this.
-  // $formatters['vimeo_link_formatter_thumbnail'] = array(
-  //   'label' => t('Vimeo Thumbnail'),
-  //   'description' => t('Displays the thumbnail of Vimeo video, if the URL is for a Vimeo.com video page.'),
-  //   'field types' => array('link_field'),
-  // );
+  $formatters['vimeo_link_formatter_thumbnail'] = array(
+     'label' => t('Vimeo Thumbnail'),
+     'description' => t('Displays the thumbnail of Vimeo video, if the URL is for a Vimeo.com video page.'),
+     'field types' => array('link_field'),
+     'settings' => vimeo_link_formatter_default_settings_thumbnail(),
+  );
 
   return $formatters;
 }
@@ -101,8 +101,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   $ret = array();
   foreach ($items as $delta => $item) {
     // Extract the ID from the URL.
-    preg_match('@http://(www\.)?vimeo\.com/([0-9]+)@', $item['url'], $matches);
-    if ($id = $matches[2]) {
+    if ($id = vimeo_link_formatter_id($item['url'])) {
       $url = url("http://player.vimeo.com/video/$id", $url);
       $ret[] = array('#markup' => "<iframe src=\"$url\" $attributes></iframe>");
     }
@@ -125,15 +124,114 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
  */
 function vimeo_link_formatter_default_settings_player() {
   $defaults = array(
-    // Cast values to the type that Form API forms return them as.
-    'title' => (Integer) TRUE,
-    'byline' => (Integer) TRUE,
-    'portrait' => (Integer) TRUE,
+    // Use the data types that Form API forms return them as;  Integer for
+    // Booleans, and Strings for text-input numbers.
+    'title' => 1,
+    'byline' => 1,
+    'portrait' => 1,
     'color' => '00adef',
-    'autoplay' => (Integer) FALSE,
-    'loop' => (Integer) FALSE,
-    'width' => (String) 400,
-    'height' => (String) 225,
+    'autoplay' => 0,
+    'loop' => 0,
+    'width' => '400',
+    'height' => '225',
   );
   return $defaults;
+}
+
+/**
+ * Vimeo.com's default thumbnail settings.
+ *
+ * @see vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter_thumbnail()
+ *
+ * @return Array
+ *    Default values keyed by the setting name.
+ */
+function vimeo_link_formatter_default_settings_thumbnail() {
+  $defaults = array(
+    'thumb_size' => 'medium',
+    'image_link' => '',
+  );
+  return $defaults;
+}
+
+/**
+ * Implementation of vimeo_link_formatter_field_formatter_view_FORMATTER();
+ *
+ * @return Vimeo remote image html
+ */
+function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnail($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $ret = array();
+
+  foreach ($items as $delta => $item) {
+    // Extract the ID from the URL.
+    if ($id = vimeo_link_formatter_id($item['url'])) {
+      // Get the cached thumbnail data.
+      $cache_id = 'vimeo_link_formatter_thumbnail_hash_' . $id;
+      if ($cached = cache_get($cache_id, 'cache')) {
+        $video_hash = $cached->data;
+      }
+
+      // Or load fresh.
+      if (!isset($video_hash)) {
+        if ($video_raw = drupal_http_request("http://vimeo.com/api/v2/video/$id.php")->data) {
+          $video_hash = @unserialize($video_raw);
+
+          // Cache the response to avoid making an HTTP request everytime this
+          // video's thumbnail is rendered.
+          cache_set($cache_id, $video_hash, 'cache', CACHE_PERMANENT);
+        }
+      }
+
+      if (!empty($video_hash)) {
+        // Render the thumbnail's <img> markup.
+        $thumb_size = $display['settings']['thumb_size'] ? $display['settings']['thumb_size'] : 'medium';
+        $thumb_url = $video_hash[0]["thumbnail_$thumb_size"];
+        $img = theme('image', array('path' => $thumb_url, 'alt' => $video_hash[0]['title']));
+
+        // Check if the formatter involves a link.
+        if ($display['settings']['image_link'] == 'content') {
+          $uri = entity_uri($entity_type, $entity);
+          // By using a render array, URLs may be altered.
+          $ret[] = array(
+            '#theme' => 'link',
+            '#path' => $uri['path'],
+            '#text' => $img,
+            '#options' => array('html' => TRUE, 'attributes' => array()),
+          );
+        }
+        // Link to the video?
+        else if ($display['settings']['image_link'] == 'video') {
+          $ret[] = array(
+            '#theme' => 'link',
+            '#path' => $item['url'],
+            '#text' => $img,
+            '#options' => array('html' => TRUE, 'absolute' => TRUE, 'attributes' => array()),
+          );
+        }
+        else {
+          // Just the thumbnail's <img> html.
+          $ret[] = array('#markup' => $img);
+        }
+      }
+    }
+    else {
+      // The link is not a valid Vimeo.com link.
+      // @todo Handle this better, perhaps with node-form validation or more
+      // formatter settings?
+    }
+  }
+  return $ret;
+}
+
+/**
+ * Gets the Vimeo ID from a vimeo.com URL.
+ *
+ * @param $url String
+ *
+ * @return String
+ *   The numeric ID as a string.
+ */
+function vimeo_link_formatter_id($url) {
+  preg_match('@http://(www\.)?vimeo\.com/([0-9]+)@', $url, $matches);
+  return isset($matches[2]) ? $matches[2] : NULL;
 }

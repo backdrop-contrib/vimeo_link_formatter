@@ -143,3 +143,72 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
 
   return $form;
 }
+
+/**
+ * Implementation of hook_field_formatter_settings_summary_FORMATTER().
+ *
+ * @return String
+ *    Translated text string summarizing the formatter settings.
+ */
+function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_formatter_thumbnail($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = array();
+
+  $summary[] = t('Use Vimeo video thumb of size "@thumb_size"', array(
+    '@thumb_size'     => $settings['thumb_size'],
+  )); // we use t() for translation and placeholders to guard against attacks
+
+  $link_types = array(
+    'content' => t('Linked to content'),
+    'video' => t('Linked to video'),
+  );
+
+  // Display this setting only if image is linked.
+  if (isset($link_types[$settings['image_link']])) {
+    $summary[] = $link_types[$settings['image_link']];
+  }
+
+  return implode('<br />', $summary);
+}
+
+/**
+ * Implementation of hook_field_formatter_settings_form_FORMATTER().
+ */
+function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter_thumbnail($field, $instance, $view_mode, $form, &$form_state) {
+  // This gets the view_mode where our settings are stored
+  $display = $instance['display'][$view_mode];
+
+  // This gets the actual settings
+  $settings = $display['settings'];
+
+  // Initialize the element variable
+  $element = array();
+
+  // Add your select box
+  $element['thumb_size'] = array(
+    '#type'           => 'select',                           // Use a select box widget
+    '#title'          => t('Thumbnail Size'),                   // Widget label
+    '#description'    => t('Select what size of Vimeo thumbnail'), // Helper text
+    '#default_value'  => $settings['thumb_size'],              // Get the value if it's already been set
+    '#options'        => array(
+      'small'  => 'Small',
+      'medium' => 'Medium',
+      'large'  => 'Large',
+    ),
+  );
+
+  $link_types = array(
+    'content' => t('Content'),
+    'video' => t('Video'),
+  );
+  $element['image_link'] = array(
+    '#title' => t('Link image to'),
+    '#type' => 'select',
+    '#default_value' => $settings['image_link'],
+    '#empty_option' => t('Nothing'),
+    '#options' => $link_types,
+  );
+  return $element;
+}
