@@ -1,8 +1,5 @@
 name = 'Vimeo Link Formatter'
 description = 'Provides a field formatter for Link fields to format them as Vimeo video players.'
 core = 7.x
-package = Media
-files[] = vimeo_link_formatter.module
-files[] = vimeo_link_formatter.admin.inc
-dependencies[] = field
+package = Fields
 dependencies[] = link
