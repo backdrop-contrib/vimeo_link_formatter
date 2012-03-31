@@ -76,6 +76,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   foreach ($settings as $name) {
     $attributes[$name] = $display['settings'][$name];
   }
+  $attributes['id'] = drupal_html_id('vimeo-player');
   $attributes = drupal_attributes($attributes);
 
   // Default Vimeo Player formatter settings.

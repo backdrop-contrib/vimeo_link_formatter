@@ -50,7 +50,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
     '!options' => $options,
   );
 
-  return t('!width x !height <code !attributes>!color</code>  Show !show.  !options', $vars);
+  return t('!width x !height <code !attributes>!color</code> Display options: !options', $vars);
 }
 
 /**
