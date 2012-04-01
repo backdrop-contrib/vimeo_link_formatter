@@ -129,7 +129,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   $form['js_api'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable javascript API'),
-    '#description' => t("Enable the vimeo javascript api (this has performance implications-- don't use unless you know what you're doing. See @link for more information.", array('link' => '<a href="http://vimeo.com/api/docs/player-js">Vimeo Player Javascript API</a>')),
+    '#description' => t('Enable the vimeo javascript api (this has performance implications-- don\'t use unless you know what you\'re doing. See <a href="!url">Vimeo Player Javascript API</a> for more information', array('!url' => 'http://vimeo.com/api/docs/player-js')),
   );
 
 
