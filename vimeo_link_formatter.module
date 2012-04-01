@@ -142,7 +142,7 @@ function vimeo_link_formatter_default_settings_player() {
     'loop' => 0,
     'width' => '400',
     'height' => '225',
-    'js_api' => '0',
+    'js_api' => 0,
   );
   return $defaults;
 }
