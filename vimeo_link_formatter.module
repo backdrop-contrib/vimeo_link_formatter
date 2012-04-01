@@ -76,7 +76,8 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   foreach ($settings as $name) {
     $attributes[$name] = $display['settings'][$name];
   }
-  $attributes['id'] = drupal_html_id('vimeo-player');
+  $player_id = drupal_html_id('vimeo-player');
+  $attributes['id'] = $player_id;
   $attributes = drupal_attributes($attributes);
 
   // Default Vimeo Player formatter settings.
@@ -95,7 +96,13 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
     //   desirable.
     // Also, skip over the settings used for attributes.
     if (!in_array($name, $settings) && isset($defaults[$name]) && $defaults[$name] !== $value) {
-      $url['query'][$name] = $value;
+      if ($name == 'js_api') {
+        $url['query']['api'] = 1;
+        $url['query']['player_id'] = $player_id;
+      }
+      else {
+        $url['query'][$name] = $value;
+      }
     }
   }
 
@@ -104,7 +111,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
     // Extract the ID from the URL.
     if ($id = vimeo_link_formatter_id($item['url'])) {
       $url = url("http://player.vimeo.com/video/$id", $url);
-      $ret[] = array('#markup' => "<iframe src=\"$url\" $attributes></iframe>");
+      $ret[] = array('#markup' => "<iframe src=\"$url\"$attributes></iframe>");
     }
     else {
       // The link is not a valid Vimeo.com link.
@@ -135,6 +142,7 @@ function vimeo_link_formatter_default_settings_player() {
     'loop' => 0,
     'width' => '400',
     'height' => '225',
+    'js_api' => '0',
   );
   return $defaults;
 }

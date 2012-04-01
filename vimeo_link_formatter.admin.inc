@@ -15,13 +15,14 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
   // Access the formatter settings for this instance of the Link field.
   $settings = $instance['display'][$view_mode]['settings'];
 
-  // Build a comma-separated list of options that are enabled.
+  // Build a comma-separated list of available options.
   $options = array(
     'portrait' => t('Portrait'),
     'title' => t('Title'),
     'byline' => t('Byline'),
     'autoplay' => t('Autoplay'),
     'loop' => t('Loop'),
+    'js_api' => t('Javascript API'),
   );
   foreach (array_keys($options) as $name) {
     if (!$settings[$name]) {
@@ -50,7 +51,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
     '!options' => $options,
   );
 
-  return t('!width x !height <code !attributes>!color</code> Display options: !options', $vars);
+  return t('!width x !height <code !attributes>!color</code> Player options: !options', $vars);
 }
 
 /**
@@ -123,6 +124,14 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
     '#title' => t('Loop'),
     '#description' => t('Play the video repeatedly.'),
   );
+
+  // js api.
+  $form['js_api'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable javascript API'),
+    '#description' => t("Enable the vimeo javascript api (this has performance implications-- don't use unless you know what you're doing. See @link for more information.", array('link' => '<a href="http://vimeo.com/api/docs/player-js">Vimeo Player Javascript API</a>')),
+  );
+
 
   // Set some Form API attributes that apply to all elements.
   $size = max(drupal_strlen('000000'), drupal_strlen('100%'));
