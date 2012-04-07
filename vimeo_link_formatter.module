@@ -84,12 +84,12 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   $defaults = vimeo_link_formatter_default_settings_player();
 
   // Options for Drupal's url() function.
-  $url = array('query' => array(), 'external' => TRUE);
+  $url_options = array('query' => array(), 'external' => TRUE);
 
   // Build up the query string.
   foreach ($display['settings'] as $name => $value) {
     // Vimeo does not pay attention to the value of the paramter, but
-    // whether the parameter is set or not.  So it iss important not to set
+    // whether the parameter is set or not.  So it is important not to set
     // parameters to their default values.  I.e.
     //   Do not set title=1, because that is Vimeo.com's default, and setting
     //   title=1 will cause the same effect as setting title=0, which is not
@@ -97,11 +97,11 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
     // Also, skip over the settings used for attributes.
     if (!in_array($name, $settings) && isset($defaults[$name]) && $defaults[$name] !== $value) {
       if ($name == 'js_api') {
-        $url['query']['api'] = 1;
-        $url['query']['player_id'] = $player_id;
+        $url_options['query']['api'] = 1;
+        $url_options['query']['player_id'] = $player_id;
       }
       else {
-        $url['query'][$name] = $value;
+        $url_options['query'][$name] = $value;
       }
     }
   }
@@ -110,7 +110,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   foreach ($items as $delta => $item) {
     // Extract the ID from the URL.
     if ($id = vimeo_link_formatter_id($item['url'])) {
-      $url = url("http://player.vimeo.com/video/$id", $url);
+      $url = url("http://player.vimeo.com/video/$id", $url_options);
       $ret[] = array('#markup' => "<iframe src=\"$url\"$attributes></iframe>");
     }
     else {
