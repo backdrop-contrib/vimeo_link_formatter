@@ -109,8 +109,8 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   $ret = array();
   foreach ($items as $delta => $item) {
     // Extract the ID from the URL.
-    if ($id = vimeo_link_formatter_id($item['url'])) {
-      $url = url("http://player.vimeo.com/video/$id", $url_options);
+    if ($vimeo = vimeo_link_formatter_id($item['url'])) {
+      $url = url($vimeo['protocol'] . '://player.vimeo.com/video/' . $vimeo['id'], $url_options);
       $ret[] = array('#markup' => "<iframe src=\"$url\"$attributes></iframe>");
     }
     else {
@@ -173,16 +173,16 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
 
   foreach ($items as $delta => $item) {
     // Extract the ID from the URL.
-    if ($id = vimeo_link_formatter_id($item['url'])) {
+    if ($vimeo = vimeo_link_formatter_id($item['url'])) {
       // Get the cached thumbnail data.
-      $cache_id = 'vimeo_link_formatter_thumbnail_hash_' . $id;
+      $cache_id = 'vimeo_link_formatter_thumbnail_hash_' . $vimeo['id'];
       if ($cached = cache_get($cache_id, 'cache')) {
         $video_hash = $cached->data;
       }
 
       // Or load fresh.
       if (!isset($video_hash)) {
-        if ($video_raw = drupal_http_request("http://vimeo.com/api/v2/video/$id.php")->data) {
+        if ($video_raw = drupal_http_request($vimeo['protocol'] . '://vimeo.com/api/v2/video/' . $vimeo['id'] . '.php')->data) {
           $video_hash = @unserialize($video_raw);
 
           // Cache the response to avoid making an HTTP request everytime this
@@ -241,6 +241,6 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
  *   The numeric ID as a string.
  */
 function vimeo_link_formatter_id($url) {
-  preg_match('@http://(www\.)?vimeo\.com/([0-9]+)@', $url, $matches);
-  return isset($matches[2]) ? $matches[2] : NULL;
+  preg_match('@(http|https)://(www\.)?vimeo\.com/([0-9]+)@', $url, $matches);
+  return isset($matches[3]) ? array ('protocol' => $matches[1], 'id' => $matches[3]) : NULL;
 }
