@@ -111,7 +111,8 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
     // Extract the ID from the URL.
     if ($vimeo = vimeo_link_formatter_id($item['url'])) {
       $url = url($vimeo['protocol'] . '://player.vimeo.com/video/' . $vimeo['id'], $url_options);
-      $ret[] = array('#markup' => "<iframe src=\"$url\"$attributes></iframe>");
+      $title = check_plain($item['title']);
+      $ret[] = array('#markup' => "<iframe title=\"$title\" src=\"$url\"$attributes></iframe>");
     }
     else {
       // The link is not a valid Vimeo.com link.
