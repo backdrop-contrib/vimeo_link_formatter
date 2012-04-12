@@ -31,7 +31,7 @@ function vimeo_link_formatter_field_formatter_info() {
 /**
  * Implements hook_field_formatter_settings_summary().
  */
-function vimeo_link_formatter_field_formatter_settings_summary(&$field, &$instance, &$view_mode) {
+function vimeo_link_formatter_field_formatter_settings_summary($field, $instance, $view_mode) {
   module_load_include('inc', 'vimeo_link_formatter', 'vimeo_link_formatter.admin');
   // Call the function which handles this formatter.
   $function = __FUNCTION__ . '_' . $instance['display'][$view_mode]['type'];
