@@ -182,7 +182,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
       }
 
       // Or load fresh.
-      if (!isset($video_hash)) {
+      else {
         if ($video_raw = drupal_http_request($vimeo['protocol'] . '://vimeo.com/api/v2/video/' . $vimeo['id'] . '.php')->data) {
           $video_hash = @unserialize($video_raw);
 
