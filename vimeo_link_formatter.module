@@ -195,8 +195,14 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
       if (!empty($video_hash)) {
         // Render the thumbnail's <img> markup.
         $thumb_size = $display['settings']['thumb_size'] ? $display['settings']['thumb_size'] : 'medium';
-        $thumb_url = $video_hash[0]["thumbnail_$thumb_size"];
-        $img = theme('image', array('path' => $thumb_url, 'alt' => $video_hash[0]['title']));
+        if (module_exists('imagecache_external')) {
+          $thumb_url = $video_hash[0]["thumbnail_large"];
+          $img = theme('imagecache_external', array('path' => $thumb_url, 'style_name' => $thumb_size, 'alt' => $video_hash[0]['title']));
+        }
+        else {
+          $thumb_url = $video_hash[0]["thumbnail_$thumb_size"];
+          $img = theme('image', array('path' => $thumb_url, 'alt' => $video_hash[0]['title']));
+        }
 
         // Check if the formatter involves a link.
         if ($display['settings']['image_link'] == 'content') {

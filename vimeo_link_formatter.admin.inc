@@ -196,16 +196,22 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   $element = array();
 
   // Add your select box
-  $element['thumb_size'] = array(
-    '#type'           => 'select',                           // Use a select box widget
-    '#title'          => t('Thumbnail Size'),                   // Widget label
-    '#description'    => t('Select what size of Vimeo thumbnail'), // Helper text
-    '#default_value'  => $settings['thumb_size'],              // Get the value if it's already been set
-    '#options'        => array(
-      'small'  => 'Small',
+  if (module_exists('imagecache_external')) {
+    $size_options = image_style_options();
+  }
+  else {
+    $size_options = array(
+      'small' => 'Small',
       'medium' => 'Medium',
-      'large'  => 'Large',
-    ),
+      'large' => 'Large',
+    );
+  }
+  $element['thumb_size'] = array(
+    '#type'           => 'select',                                 // Use a select box widget
+    '#title'          => t('Thumbnail Size'),                      // Widget label
+    '#description'    => t('Select what size of Vimeo thumbnail'), // Helper text
+    '#default_value'  => $settings['thumb_size'],                  // Get the value if it's already been set
+    '#options'        => $size_options,
   );
 
   $link_types = array(
