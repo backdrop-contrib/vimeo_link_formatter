@@ -110,9 +110,18 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   foreach ($items as $delta => $item) {
     // Extract the ID from the URL.
     if ($vimeo = vimeo_link_formatter_id($item['url'])) {
-      $url = url($vimeo['protocol'] . '://player.vimeo.com/video/' . $vimeo['id'], $url_options);
-      $title = check_plain($item['title']);
-      $ret[] = array('#markup' => "<iframe title=\"$title\" src=\"$url\"$attributes></iframe>");
+      // Allow modules to alter embed code.
+      $embed = array(
+        'title' => $item['title'],
+        'url_options' => $url_options,
+        'attributes' => $attributes,
+      );
+      drupal_alter('vimeo_link_formatter_embed', $embed, $item, $display);
+
+      $url = url($vimeo['protocol'] . '://player.vimeo.com/video/' . $vimeo['id'], $embed['url_options']);
+      $title = check_plain($embed['title']);
+
+      $ret[] = array('#markup' => '<iframe title="' . $title . '" src="' . $url . '"' . $embed['attributes'] . '></iframe>');
     }
     else {
       // The link is not a valid Vimeo.com link.
