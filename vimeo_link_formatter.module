@@ -6,7 +6,7 @@
 
 
 /**
- * Implementats hook_field_formatter_info().
+ * Implements hook_field_formatter_info().
  */
 function vimeo_link_formatter_field_formatter_info() {
   $formatters = array();
@@ -19,10 +19,10 @@ function vimeo_link_formatter_field_formatter_info() {
   );
 
   $formatters['vimeo_link_formatter_thumbnail'] = array(
-     'label' => t('Vimeo Thumbnail'),
-     'description' => t('Displays the thumbnail of Vimeo video, if the URL is for a Vimeo.com video page.'),
-     'field types' => array('link_field'),
-     'settings' => vimeo_link_formatter_default_settings_thumbnail(),
+    'label' => t('Vimeo Thumbnail'),
+    'description' => t('Displays the thumbnail of Vimeo video, if the URL is for a Vimeo.com video page.'),
+    'field types' => array('link_field'),
+    'settings' => vimeo_link_formatter_default_settings_thumbnail(),
   );
 
   return $formatters;
@@ -76,24 +76,27 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   foreach ($settings as $name) {
     $attributes[$name] = $display['settings'][$name];
   }
-  $player_id = drupal_html_id('vimeo-player');
+  $player_id = backdrop_html_id('vimeo-player');
   $attributes['id'] = $player_id;
-  $attributes = drupal_attributes($attributes);
+  $attributes = backdrop_attributes($attributes);
 
   // Default Vimeo Player formatter settings.
   $defaults = vimeo_link_formatter_default_settings_player();
 
-  // Options for Drupal's url() function.
-  $url_options = array('query' => array(), 'external' => TRUE);
+  // Options for Backdrop's url() function.
+  $url_options = array(
+    'query' => array(),
+    'external' => TRUE,
+  );
 
   // Build up the query string.
   foreach ($display['settings'] as $name => $value) {
     // Vimeo does not pay attention to the value of the paramter, but
     // whether the parameter is set or not.  So it is important not to set
     // parameters to their default values.  I.e.
-    //   Do not set title=1, because that is Vimeo.com's default, and setting
-    //   title=1 will cause the same effect as setting title=0, which is not
-    //   desirable.
+//   Do not set title=1, because that is Vimeo.com's default, and setting
+//   title=1 will cause the same effect as setting title=0, which is not
+//   desirable.
     // Also, skip over the settings used for attributes.
     if (!in_array($name, $settings) && isset($defaults[$name]) && $defaults[$name] !== $value) {
       if ($name == 'js_api') {
@@ -116,7 +119,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
         'url_options' => $url_options,
         'attributes' => $attributes,
       );
-      drupal_alter('vimeo_link_formatter_embed', $embed, $item, $display);
+      backdrop_alter('vimeo_link_formatter_embed', $embed, $item, $display);
 
       $url = url($vimeo['protocol'] . '://player.vimeo.com/video/' . $vimeo['id'], $embed['url_options']);
       $title = check_plain($embed['title']);
@@ -192,7 +195,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
 
       // Or load fresh.
       else {
-        if ($video_raw = drupal_http_request($vimeo['protocol'] . '://vimeo.com/api/v2/video/' . $vimeo['id'] . '.php')->data) {
+        if ($video_raw = backdrop_http_request($vimeo['protocol'] . '://vimeo.com/api/v2/video/' . $vimeo['id'] . '.php')->data) {
           $video_hash = @unserialize($video_raw);
 
           // Cache the response to avoid making an HTTP request everytime this
@@ -221,7 +224,10 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
             '#theme' => 'link',
             '#path' => $uri['path'],
             '#text' => $img,
-            '#options' => array('html' => TRUE, 'attributes' => array()),
+            '#options' => array(
+              'html' => TRUE,
+              'attributes' => array(),
+            ),
           );
         }
         // Link to the video?
@@ -230,7 +236,11 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
             '#theme' => 'link',
             '#path' => $item['url'],
             '#text' => $img,
-            '#options' => array('html' => TRUE, 'absolute' => TRUE, 'attributes' => array()),
+            '#options' => array(
+              'html' => TRUE,
+              'absolute' => TRUE,
+              'attributes' => array(),
+            ),
           );
         }
         else {
@@ -258,5 +268,8 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
  */
 function vimeo_link_formatter_id($url) {
   preg_match('@(http|https)://(www\.)?vimeo\.com/.*?([0-9]+)@', $url, $matches);
-  return isset($matches[3]) ? array ('protocol' => $matches[1], 'id' => $matches[3]) : NULL;
+  return isset($matches[3]) ? array(
+    'protocol' => $matches[1],
+    'id' => $matches[3],
+  ) : NULL;
 }

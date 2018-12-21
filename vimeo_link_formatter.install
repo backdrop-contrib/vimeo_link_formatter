@@ -1,0 +1,28 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the vimeo_link_formatter module.
+ *
+ */
+
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function vimeo_link_formatter_update_last_removed() {
+  return;
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function vimeo_link_formatter_update_1000() {
+  $config = config('vimeo_link_formatter.settings');
+}
+
+/**
+ * Implements hook_install().
+ */
+function vimeo_link_formatter_install() {
+  // Dynamically generated variable data was detected.
+}

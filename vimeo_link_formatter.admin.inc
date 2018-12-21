@@ -46,7 +46,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
     '!width' => $settings['width'],
     '!height' => $settings['height'],
     // Inline CSS is not translatable.
-    '!attributes' => drupal_attributes(compact('style')),
+    '!attributes' => backdrop_attributes(compact('style')),
     '!color' => $settings['color'],
     '!options' => $options,
   );
@@ -84,8 +84,8 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   $default_style = "background-color: #{$defaults['color']} ; color: white; $style;";
   $vars = array(
     '!default' => $defaults['color'],
-    '!default_style' => drupal_attributes(array('style' => $default_style)),
-    '!example_style' => drupal_attributes(array('style' => $example_style)),
+    '!default_style' => backdrop_attributes(array('style' => $default_style)),
+    '!example_style' => backdrop_attributes(array('style' => $example_style)),
   );
   $form['color'] = array(
     '#title' => t('Color'),
@@ -134,7 +134,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
 
 
   // Set some Form API attributes that apply to all elements.
-  $size = max(drupal_strlen('000000'), drupal_strlen('100%'));
+  $size = max(backdrop_strlen('000000'), backdrop_strlen('100%'));
   foreach (array_keys($form) as $key) {
     // Textboxes are smaller than default.  #size is ignored for checkboxes.
     $form[$key]['#size'] = $size;
@@ -154,7 +154,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
 }
 
 /**
- * Implementation of hook_field_formatter_settings_summary_FORMATTER().
+ * Implements hook_field_formatter_settings_summary_FORMATTER().
  *
  * @return String
  *    Translated text string summarizing the formatter settings.
@@ -166,7 +166,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
   $summary = array();
 
   $summary[] = t('Use Vimeo video thumb of size "@thumb_size"', array(
-    '@thumb_size'     => $settings['thumb_size'],
+    '@thumb_size' => $settings['thumb_size'],
   )); // we use t() for translation and placeholders to guard against attacks
 
   $link_types = array(
@@ -183,7 +183,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
 }
 
 /**
- * Implementation of hook_field_formatter_settings_form_FORMATTER().
+ * Implements hook_field_formatter_settings_form_FORMATTER().
  */
 function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter_thumbnail($field, $instance, $view_mode, $form, &$form_state) {
   // This gets the view_mode where our settings are stored
@@ -207,11 +207,11 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
     );
   }
   $element['thumb_size'] = array(
-    '#type'           => 'select',                                 // Use a select box widget
-    '#title'          => t('Thumbnail Size'),                      // Widget label
-    '#description'    => t('Select what size of Vimeo thumbnail'), // Helper text
-    '#default_value'  => $settings['thumb_size'],                  // Get the value if it's already been set
-    '#options'        => $size_options,
+    '#type' => 'select', // Use a select box widget
+    '#title' => t('Thumbnail Size'), // Widget label
+    '#description' => t('Select what size of Vimeo thumbnail'), // Helper text
+    '#default_value' => $settings['thumb_size'], // Get the value if it's already been set
+    '#options' => $size_options,
   );
 
   $link_types = array(
