@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Provides admin functions for the Vimeo Link Formatter.
@@ -21,6 +22,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
     'title' => t('Title'),
     'byline' => t('Byline'),
     'autoplay' => t('Autoplay'),
+    'fullscreen' => t('Full Screen'),
     'loop' => t('Loop'),
     'js_api' => t('Javascript API'),
   );
@@ -45,8 +47,7 @@ function vimeo_link_formatter_field_formatter_settings_summary_vimeo_link_format
 
   if ($settings['responsive']) {
     $message =  'Responsive';
-  }
-  else {
+  } else {
     $vars['!width'] = $settings['width'];
     $vars['!height'] = $settings['height'];
     $message =  '!width x !height';
@@ -152,6 +153,13 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
     '#description' => t('Automatically play the video on load.  This also causes the portrait, title and byline to be hidden.'),
   );
 
+  // Fullscreen
+  $form['fullscreen'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow FullScreen'),
+    '#description' => t('Enable the FullScreen Button on the player.'),
+  );
+
   // Loop textbox.
   $form['loop'] = array(
     '#type' => 'checkbox',
@@ -232,8 +240,7 @@ function vimeo_link_formatter_field_formatter_settings_form_vimeo_link_formatter
   // Add your select box
   if (module_exists('imagecache_external')) {
     $size_options = image_style_options();
-  }
-  else {
+  } else {
     $size_options = array(
       'small' => 'Small',
       'medium' => 'Medium',
