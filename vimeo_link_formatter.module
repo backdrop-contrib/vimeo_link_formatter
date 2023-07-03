@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Provides a field formatter for Link fields to format them as Vimeo video players.
@@ -83,6 +84,13 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
   $player_id = backdrop_html_id('vimeo-player');
   $attributes['id'] = $player_id;
 
+  // Add fullscreen attributes.
+  if ($display['settings']['fullscreen']) {
+    $attributes['mozallowfullscreen'] = 'mozallowfullscreen';
+    $attributes['webkitallowfullscreen'] = 'webkitallowfullscreen';
+    $attributes['allowfullscreen'] = 'allowfullscreen';
+  }
+
   // Default Vimeo Player formatter settings.
   $defaults = vimeo_link_formatter_default_settings_player();
 
@@ -105,8 +113,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
       if ($name == 'js_api') {
         $url_options['query']['api'] = 1;
         $url_options['query']['player_id'] = $player_id;
-      }
-      else {
+      } else {
         $url_options['query'][$name] = $value;
       }
     }
@@ -143,14 +150,12 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_player($
       if ($display['settings']['responsive']) {
         // Add a container.
         $markup = '<div style="padding: 56.25% 0 0 0; position: relative;">' . $iframe . '</div>';
-      }
-      else {
+      } else {
         $markup = $iframe;
       }
 
       $ret[] = array('#markup' => $markup);
-    }
-    else {
+    } else {
       // The link is not a valid Vimeo.com link.
       // @todo Handle this better, perhaps with node-form validation or more
       // formatter settings?
@@ -176,6 +181,7 @@ function vimeo_link_formatter_default_settings_player() {
     'portrait' => 1,
     'color' => '00adef',
     'autoplay' => 0,
+    'fullscreen' => 1,
     'loop' => 0,
     'responsive' => 1,
     'width' => '400',
@@ -235,8 +241,7 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
         if (module_exists('imagecache_external')) {
           $thumb_url = $video_hash[0]["thumbnail_large"];
           $img = theme('imagecache_external', array('path' => $thumb_url, 'style_name' => $thumb_size, 'alt' => $video_hash[0]['title']));
-        }
-        else {
+        } else {
           $thumb_url = $video_hash[0]["thumbnail_$thumb_size"];
           $img = theme('image', array('path' => $thumb_url, 'alt' => $video_hash[0]['title']));
         }
@@ -267,14 +272,12 @@ function vimeo_link_formatter_field_formatter_view_vimeo_link_formatter_thumbnai
               'attributes' => array(),
             ),
           );
-        }
-        else {
+        } else {
           // Just the thumbnail's <img> html.
           $ret[] = array('#markup' => $img);
         }
       }
-    }
-    else {
+    } else {
       // The link is not a valid Vimeo.com link.
       // @todo Handle this better, perhaps with node-form validation or more
       // formatter settings?
